@@ -1,6 +1,9 @@
 package com.todogrifos.productosms.controller;
 
 
+import com.todogrifos.productosms.dto.ProductoCreateDTO;
+import com.todogrifos.productosms.dto.ProductoDTO;
+import com.todogrifos.productosms.dto.ProductoUpdateDTO;
 import com.todogrifos.productosms.model.Producto;
 import com.todogrifos.productosms.service.ProductoService;
 import jakarta.validation.Valid;
@@ -19,29 +22,67 @@ public class ProductoController {
     private ProductoService productoService;
 
     @PostMapping
-    public ResponseEntity<Producto> registrarProducto(@Valid @RequestBody Producto producto) {
-        Producto nuevoProducto = productoService.registrarProducto(producto);
+    public ResponseEntity<ProductoDTO> registrarProducto(@Valid @RequestBody ProductoCreateDTO dto) {
+        ProductoDTO nuevoProductoDTO = productoService.registrarProducto(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(nuevoProducto);
+                .body(nuevoProductoDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<Producto>> listarTodos() {
+    public ResponseEntity<List<ProductoDTO>> listarTodos() {
         return ResponseEntity.ok(productoService.listarProductos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtenerProductoPorId(@PathVariable Long id) {
-        Producto producto = productoService.obtenerProductoPorId(id);
-        return ResponseEntity.ok(producto);
+    public ResponseEntity<ProductoDTO> obtenerProductoPorId(@PathVariable Long id) {
+        ProductoDTO productoDTO = productoService.obtenerProductoPorId(id);
+        return ResponseEntity.ok(productoDTO);
     }
 
+    // Búsqueda general (para filtrar muchos resultados)
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ProductoDTO>> buscarPorNombre(@RequestParam String nombre) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(productoService.buscarPorNombre(nombre));
+    }
+
+    // Búsqueda concreta por SKU (identificador unico comercial)
+    @GetMapping("/sku/{sku}")
+    public ResponseEntity<ProductoDTO> buscarPorSku(@PathVariable String sku) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(productoService.buscarPorSku(sku));
+    }
+
+    @GetMapping("/marca/{id}")
+    public ResponseEntity<List<ProductoDTO>> listarPorMarca(@PathVariable Long id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(productoService.listarPorMarca(id));
+    }
+
+    @GetMapping("/categoria/{id}")
+    public ResponseEntity<List<ProductoDTO>> listarPorCategoria(@PathVariable Long id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(productoService.listarPorCategoria(id));
+    }
+
+    @GetMapping("/activos")
+    public ResponseEntity<List<ProductoDTO>> listarActivos() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(productoService.listarProductosActivos());
+    }
+
+
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> actualizarProducto(
+    public ResponseEntity<ProductoDTO> actualizarProducto(
             @PathVariable Long id,
-            @Valid @RequestBody Producto producto) {
-        Producto productoActualizado = productoService.actualizarProducto(id, producto);
-        return ResponseEntity.status(HttpStatus.OK).body(productoActualizado);
+            @Valid @RequestBody ProductoUpdateDTO dto) {
+        ProductoDTO productoDTOActualizado = productoService.actualizarProducto(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(productoDTOActualizado);
     }
 
 
@@ -52,4 +93,5 @@ public class ProductoController {
 
         return ResponseEntity.noContent().build();
     }
+
 }
