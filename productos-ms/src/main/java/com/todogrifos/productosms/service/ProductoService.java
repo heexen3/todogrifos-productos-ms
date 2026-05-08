@@ -1,6 +1,7 @@
 package com.todogrifos.productosms.service;
 
 import com.todogrifos.productosms.exception.ProductoNotFoundException;
+import com.todogrifos.productosms.exception.SkuDuplicadoException;
 import com.todogrifos.productosms.model.Producto;
 import com.todogrifos.productosms.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class ProductoService {
     // PUT
     public Producto registrarProducto(Producto producto) {
         if (productoRepository.existsBySku(producto.getSku())) {
-            throw new RuntimeException("El SKU " + producto.getSku() + " ya está registrado.");
+            throw new SkuDuplicadoException("El SKU " + producto.getSku() + " ya está registrado.");
         }
         producto.setActivo(true);
 
