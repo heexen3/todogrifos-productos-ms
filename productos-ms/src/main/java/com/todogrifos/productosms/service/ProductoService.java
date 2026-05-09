@@ -19,7 +19,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class ProductoService {
-
     @Autowired
     private ProductoRepository productoRepository;
     @Autowired
@@ -56,7 +55,7 @@ public class ProductoService {
 
     // GET
     public ProductoDTO obtenerProductoPorId(Long id) {
-        log.debug("Solicitud de búsqueda para producto ID: {}", id);
+        log.info("Solicitud de búsqueda para producto ID: {}", id);
         return productoRepository.findById(id)
                 .map(p -> {
                     log.debug("Producto recuperado: {}", p.getNombre());
@@ -107,13 +106,13 @@ public class ProductoService {
     }
 
     public List<ProductoDTO> buscarPorNombre(String nombre) {
-        log.debug("Búsqueda de productos por nombre: '{}'", nombre);
+        log.info("Búsqueda de productos por nombre: '{}'", nombre);
         return productoRepository
                 .findByNombreContainingIgnoreCase(nombre).stream().map(this::convertirADTO).toList();
     }
 
     public ProductoDTO buscarPorSku(String sku) {
-        log.debug("Búsqueda de producto por SKU: {}", sku);
+        log.info("Búsqueda de producto por SKU: {}", sku);
         return productoRepository.findBySku(sku).map(this::convertirADTO).orElseThrow(() -> {
             log.warn("SKU {} no encontrado", sku);
             return new ProductoNotFoundException("Producto no encontrado.");
@@ -131,7 +130,7 @@ public class ProductoService {
     }
 
     public List<ProductoDTO> listarProductosActivos() {
-        log.debug("Recuperando lista de productos activos");
+        log.info("Recuperando lista de productos activos");
         return productoRepository.findByActivoTrue().stream().map(this::convertirADTO).toList();
     }
 
